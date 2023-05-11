@@ -1,0 +1,45 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using eSyaServices.DL.Repository;
+using eSyaServices.DO;
+using eSyaServices.IF;
+using Microsoft.AspNetCore.Mvc;
+
+namespace eSyaServices.WebAPI.Controllers
+{
+    [Route("api/[controller]/[action]")]
+    [ApiController]
+    public class CommonMethodController : ControllerBase
+    {
+        private readonly ICommonMethodRepository _CommonMethodRepository;
+        public CommonMethodController(ICommonMethodRepository commonmethodRepository)
+        {
+            _CommonMethodRepository = commonmethodRepository;
+        }
+        #region Common
+        public async Task<IActionResult> GetBusinessKey()
+        {
+            var ac = await _CommonMethodRepository.GetBusinessKey();
+            return Ok(ac);
+        }
+        public async Task<IActionResult> GetApplicationCodesByCodeType(int codetype)
+        {
+            var ac = await _CommonMethodRepository.GetApplicationCodesByCodeType(codetype);
+            return Ok(ac);
+        }
+        public async Task<IActionResult> GetCurrencyCodes()
+        {
+            var ac = await _CommonMethodRepository.GetCurrencyCodes();
+            return Ok(ac);
+        }
+        public async Task<IActionResult> GetDoctors()
+        {
+            var ac = await _CommonMethodRepository.GetDoctors();
+            return Ok(ac);
+        }
+        #endregion
+
+    }
+}

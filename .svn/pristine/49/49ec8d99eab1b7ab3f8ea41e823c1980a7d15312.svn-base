@@ -1,0 +1,75 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using eSyaServices.DL.Repository;
+using eSyaServices.DO;
+using eSyaServices.IF;
+using Microsoft.AspNetCore.Mvc;
+
+namespace eSyaServices.WebAPI.Controllers
+{
+    [Route("api/[controller]/[action]")]
+    [ApiController]
+    public class ServiceRatesController : ControllerBase
+    {
+        private readonly IServiceRatesRepository _ServiceRatesRepository;
+        public ServiceRatesController(IServiceRatesRepository serviceRatesRepository)
+        {
+            _ServiceRatesRepository = serviceRatesRepository;
+        }
+        #region Common
+        public async Task<IActionResult> GetBusinessKey()
+        {
+            var ac = await new CommonMethod().GetBusinessKey();
+            return Ok(ac);
+        }
+        public async Task<IActionResult> GetApplicationCodesByCodeType(int codetype)
+        {
+            var ac = await new CommonMethod().GetApplicationCodesByCodeType(codetype);
+            return Ok(ac);
+        }
+        public async Task<IActionResult> GetCurrencyCodes()
+        {
+            var ac = await new CommonMethod().GetCurrencyCodes();
+            return Ok(ac);
+        }
+        public async Task<IActionResult> GetDoctors()
+        {
+            var ac = await new CommonMethod().GetDoctors();
+            return Ok(ac);
+        }
+        #endregion
+    
+        #region ServiceBaseRate
+        public async Task<IActionResult> GetServiceBaseRateByBKeyRateTypeCurrCode(int businessKey, int ratetype, string currencycode)
+        {
+            var ac = await _ServiceRatesRepository.GetServiceBaseRateByBKeyRateTypeCurrCode(businessKey,ratetype,currencycode);
+            return Ok(ac);
+        }
+        public async Task<IActionResult> AddOrUpdateServiceBaseRate(List<DO_ServiceBaseRate> obj)
+        {
+            var msg = await _ServiceRatesRepository.AddOrUpdateServiceBaseRate(obj);
+            return Ok(msg);
+        }
+        #endregion
+        #region ServiceRatePlan
+        public async Task<IActionResult> GetServiceRatePlansByBKey(int businessKey)
+        {
+            var ac = await _ServiceRatesRepository.GetServiceRatePlansByBKey(businessKey);
+            return Ok(ac);
+        }
+        public async Task<IActionResult> GetServiceRatePlanByBKeyRType(int businessKey,int ratetype)
+        {
+            var ac = await _ServiceRatesRepository.GetServiceRatePlanByBKeyRType(businessKey,ratetype);
+            return Ok(ac);
+        }
+        public async Task<IActionResult> AddOrUpdateServiceRatePlan(DO_ServiceRatePlan obj)
+        {
+            var msg = await _ServiceRatesRepository.AddOrUpdateServiceRatePlan(obj);
+            return Ok(msg);
+        }
+        #endregion
+        
+    }
+}

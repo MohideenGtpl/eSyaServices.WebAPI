@@ -1,0 +1,39 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using eSyaServices.DO;
+using eSyaServices.IF;
+using Microsoft.AspNetCore.Mvc;
+
+namespace eSyaServices.WebAPI.Controllers
+{
+    [Route("api/[controller]/[action]")]
+    [ApiController]
+    public class ServiceManagementController : ControllerBase
+    {
+        private readonly IServiceManagementRepository _ServiceManagementRepository;
+        public ServiceManagementController(IServiceManagementRepository serviceManagementRepository)
+        {
+            _ServiceManagementRepository = serviceManagementRepository;
+        }
+        #region ServiceType
+        public async Task<IActionResult> GetServiceTypes()
+        {
+            var ac = await _ServiceManagementRepository.GetServiceTypes();
+            return Ok(ac);
+        }
+        public async Task<IActionResult> GetServiceTypeByID(int ServiceTypeID)
+        {
+            var ac = await _ServiceManagementRepository.GetServiceTypeByID(ServiceTypeID);
+            return Ok(ac);
+        }
+        public async Task<IActionResult> AddOrUpdateServiceType(DO_ServiceType obj)
+        {
+            var msg = await _ServiceManagementRepository.AddOrUpdateServiceType(obj);
+            return Ok(msg);
+        }
+        #endregion
+
+    }
+}

@@ -1,0 +1,793 @@
+﻿using eSyaServices.DL.Entities;
+using eSyaServices.DO;
+using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using eSyaServices.IF;
+
+namespace eSyaServices.DL.Repository
+{
+    public class ServiceManagementRepository : IServiceManagementRepository
+    {
+        #region ServiceTypes
+        public async Task<List<DO_ServiceType>> GetServiceTypes()
+        {
+            try
+            {
+                using (eSyaEnterprise db = new eSyaEnterprise())
+                {
+                    var result = db.GtEssrty
+                                 .Select(x => new DO_ServiceType
+                                 {
+                                     ServiceTypeId = x.ServiceTypeId,
+                                     ServiceTypeDesc = x.ServiceTypeDesc,
+                                     ActiveStatus = x.ActiveStatus
+                                 }
+                        ).ToListAsync();
+                    return await result;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+        public async Task<DO_ServiceType> GetServiceTypeByID(int ServiceTypeID)
+        {
+            try
+            {
+                using (eSyaEnterprise db = new eSyaEnterprise())
+                {
+                    var result = db.GtEssrty
+                        .Where(i => i.ServiceTypeId == ServiceTypeID)
+                                 .Select(x => new DO_ServiceType
+                                 {
+                                     ServiceTypeId = x.ServiceTypeId,
+                                     ServiceTypeDesc = x.ServiceTypeDesc,
+                                     ActiveStatus = x.ActiveStatus
+                                 }
+                        ).FirstOrDefaultAsync();
+                    return await result;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+        public async Task<DO_ReturnParameter> AddOrUpdateServiceType(DO_ServiceType obj)
+        {
+            using (eSyaEnterprise db = new eSyaEnterprise())
+            {
+                using (var dbContext = db.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        if (obj.ServiceTypeId == 0)
+                        {
+                            var RecordExist = db.GtEssrty.Where(w => w.ServiceTypeDesc == obj.ServiceTypeDesc).Count();
+                            if (RecordExist > 0)
+                            {
+                                return new DO_ReturnParameter() { Status = false, Message = "Service Type Already Exists" };
+                            }
+                            else
+                            {
+
+
+                                var newServiceTypeId = db.GtEssrty.Select(a => (int)a.ServiceTypeId).DefaultIfEmpty(0).Max() + 1;
+
+                                var servicetype = new GtEssrty
+                                {
+                                    ServiceTypeId = newServiceTypeId,
+                                    ServiceTypeDesc = obj.ServiceTypeDesc,
+                                    ActiveStatus = obj.ActiveStatus,
+                                    FormId = obj.FormID,
+                                    CreatedBy = obj.UserID,
+                                    CreatedOn = obj.CreatedOn,
+                                    CreatedTerminal = obj.TerminalID
+                                };
+                                db.GtEssrty.Add(servicetype);
+
+                            }
+                        }
+                        else
+                        {
+                            var updatedServiceType = db.GtEssrty.Where(w => w.ServiceTypeId == obj.ServiceTypeId).FirstOrDefault();
+                            if (updatedServiceType.ServiceTypeDesc != obj.ServiceTypeDesc)
+                            {
+                                var RecordExist = db.GtEssrty.Where(w => w.ServiceTypeDesc == obj.ServiceTypeDesc).Count();
+                                if (RecordExist > 0)
+                                {
+                                    return new DO_ReturnParameter() { Status = false, Message = "Service Type Description Already Exists" };
+                                }
+
+                            }
+                           
+                                updatedServiceType.ServiceTypeDesc = obj.ServiceTypeDesc;
+                                updatedServiceType.ActiveStatus = obj.ActiveStatus;
+                                updatedServiceType.ModifiedBy = obj.UserID;
+                                updatedServiceType.ModifiedOn = obj.CreatedOn;
+                                updatedServiceType.ModifiedTerminal = obj.TerminalID;
+
+                            
+
+                        }
+
+                        await db.SaveChangesAsync();
+                        dbContext.Commit();
+                        return new DO_ReturnParameter { Status = true };
+
+
+                    }
+                    catch (Exception ex)
+                    {
+                        dbContext.Rollback();
+                        throw ex;
+                    }
+                }
+            }
+        }
+        #endregion
+
+        #region ServiceGroups
+        public async Task<List<DO_ServiceGroup>> GetServiceGroups()
+        {
+            try
+            {
+                using (eSyaEnterprise db = new eSyaEnterprise())
+                {
+                    var result = db.GtEssrgr
+                                 .Select(x => new DO_ServiceGroup
+                                 {
+                                     ServiceTypeId = x.ServiceTypeId,
+                                     ServiceGroupId=x.ServiceGroupId,
+                                     ServiceGroupDesc = x.ServiceGroupDesc,
+                                     PrintSequence=x.PrintSequence,
+                                     ActiveStatus = x.ActiveStatus
+                                 }
+                        ).OrderBy(g => g.PrintSequence).ToListAsync();
+                    return await result;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+        public async Task<DO_ServiceGroup> GetServiceGroupByID(int ServiceGroupID)
+        {
+            try
+            {
+                using (eSyaEnterprise db = new eSyaEnterprise())
+                {
+                    var result = db.GtEssrgr
+                        .Where(i => i.ServiceGroupId == ServiceGroupID)
+                                 .Select(x => new DO_ServiceGroup
+                                 {
+                                     ServiceGroupId = x.ServiceGroupId,
+                                     ServiceGroupDesc = x.ServiceGroupDesc,
+                                     ActiveStatus = x.ActiveStatus
+                                 }
+                        ).FirstOrDefaultAsync();
+                    return await result;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+        public async Task<DO_ReturnParameter> AddOrUpdateServiceGroup(DO_ServiceGroup obj)
+        {
+            using (eSyaEnterprise db = new eSyaEnterprise())
+            {
+                using (var dbContext = db.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        if (obj.ServiceGroupId == 0)
+                        {
+                            var RecordExist = db.GtEssrgr.Where(w => w.ServiceGroupDesc == obj.ServiceGroupDesc).Count();
+                            if (RecordExist > 0)
+                            {
+                                return new DO_ReturnParameter() { Status = false, Message = "Service Group Already Exists" };
+                            }
+                            else
+                            {
+
+
+                                var newServiceGroupId = db.GtEssrgr.Select(a => (int)a.ServiceGroupId).DefaultIfEmpty(0).Max() + 1;
+                                var newPrintSequence = db.GtEssrgr.Where(w => w.ServiceTypeId == obj.ServiceTypeId).Select(a => (int)a.PrintSequence).DefaultIfEmpty(0).Max() + 1;
+
+                                var servicegroup = new GtEssrgr
+                                {
+                                    ServiceTypeId = obj.ServiceTypeId,
+                                    ServiceGroupId = newServiceGroupId,
+                                    ServiceGroupDesc = obj.ServiceGroupDesc,
+                                    PrintSequence = newPrintSequence,
+                                    ActiveStatus = obj.ActiveStatus,
+                                    FormId = obj.FormId,
+                                    CreatedBy = obj.UserID,
+                                    CreatedOn = obj.CreatedOn,
+                                    CreatedTerminal = obj.TerminalID
+                                };
+                                db.GtEssrgr.Add(servicegroup);
+
+                            }
+                        }
+                        else
+                        {                          
+                            var updatedServiceGroup = db.GtEssrgr.Where(w => w.ServiceGroupId == obj.ServiceGroupId).FirstOrDefault();
+                            if (updatedServiceGroup.ServiceGroupDesc != obj.ServiceGroupDesc)
+                            {
+                                var RecordExist = db.GtEssrgr.Where(w => w.ServiceGroupDesc == obj.ServiceGroupDesc).Count();
+                                if (RecordExist > 0)
+                                {
+                                    return new DO_ReturnParameter() { Status = false, Message = "Service Group Description Already Exists" };
+                                }
+                            }
+                                updatedServiceGroup.ServiceGroupDesc = obj.ServiceGroupDesc;
+                            updatedServiceGroup.ActiveStatus = obj.ActiveStatus;
+                            updatedServiceGroup.ModifiedBy = obj.UserID;
+                            updatedServiceGroup.ModifiedOn = obj.CreatedOn;
+                            updatedServiceGroup.ModifiedTerminal = obj.TerminalID;
+
+                        }
+
+                        await db.SaveChangesAsync();
+                        dbContext.Commit();
+                        return new DO_ReturnParameter { Status = true };
+
+
+                    }
+                    catch (Exception ex)
+                    {
+                        dbContext.Rollback();
+                        throw ex;
+                    }
+                }
+            }
+        }
+        public async Task<DO_ReturnParameter> UpdateServiceGroupIndex(int serviceTypeId, int serviceGroupId, bool isMoveUp, bool isMoveDown)
+        {
+            using (var db = new eSyaEnterprise())
+            {
+                using (var dbContext = db.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        var sgCurrent = db.GtEssrgr.Where(w => w.ServiceTypeId == serviceTypeId && w.ServiceGroupId==serviceGroupId ).FirstOrDefault();
+                        int switchIndex = 0;
+                        if (isMoveUp)
+                        {
+                            var isTop = db.GtEssrgr.Where(w => w.PrintSequence < sgCurrent.PrintSequence && w.ServiceTypeId==serviceTypeId).Count();
+                            if (isTop > 0)
+                            {
+                               var sgTarget = db.GtEssrgr.Where(w => w.PrintSequence < sgCurrent.PrintSequence && w.ServiceTypeId == serviceTypeId).OrderByDescending(o => o.PrintSequence).FirstOrDefault();
+                                switchIndex = sgCurrent.PrintSequence;
+                                sgCurrent.PrintSequence = sgTarget.PrintSequence;
+                                sgTarget.PrintSequence = switchIndex;
+                            }
+                            else
+                            {
+                                return new DO_ReturnParameter() { Status = false, Message = sgCurrent.ServiceGroupDesc + " is already on top" };
+                            }
+                            }
+                        else if (isMoveDown)
+                        {
+                            var isBottom = db.GtEssrgr.Where(w => w.PrintSequence > sgCurrent.PrintSequence && w.ServiceTypeId == serviceTypeId).Count();
+                            if (isBottom > 0)
+                            {
+                                var sgTarget = db.GtEssrgr.Where(w => w.PrintSequence > sgCurrent.PrintSequence && w.ServiceTypeId == serviceTypeId).OrderBy(o => o.PrintSequence).FirstOrDefault();
+                                switchIndex = sgCurrent.PrintSequence;
+                                sgCurrent.PrintSequence = sgTarget.PrintSequence;
+                                sgTarget.PrintSequence = switchIndex;
+                            }
+                            else
+                            {
+                                return new DO_ReturnParameter() { Status = false, Message = sgCurrent.ServiceGroupDesc + " is already on bottom" };
+                            }
+                        }
+
+                    
+                        await db.SaveChangesAsync();
+                        dbContext.Commit();
+
+                        return new DO_ReturnParameter() { Status = true };
+                    }
+                    catch (Exception ex)
+                    {
+                        dbContext.Rollback();
+                        throw ex;
+                    }
+                }
+            }
+        }
+        #endregion
+
+        #region ServiceClass
+        public async Task<List<DO_ServiceClass>> GetServiceClasses()
+        {
+            try
+            {
+                using (eSyaEnterprise db = new eSyaEnterprise())
+                {
+                    var result = db.GtEssrcl
+                                 .Select(x => new DO_ServiceClass
+                                 {
+                                     ServiceGroupId = x.ServiceGroupId,
+                                     ServiceClassId = x.ServiceClassId,
+                                     ServiceClassDesc =x.ServiceClassDesc,
+                                     ParentId=x.ParentId,
+                                     PrintSequence = x.PrintSequence,
+                                     ActiveStatus = x.ActiveStatus
+                                 }
+                        ).OrderBy(g => g.PrintSequence).ToListAsync();
+                    return await result;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+        public async Task<DO_ServiceClass> GetServiceClassByID(int ServiceClassID)
+        {
+            try
+            {
+                using (eSyaEnterprise db = new eSyaEnterprise())
+                {
+                    var result = db.GtEssrcl
+                        .Where(i => i.ServiceClassId == ServiceClassID)
+                                 .Select(x => new DO_ServiceClass
+                                 {
+                                     ServiceClassId = x.ServiceClassId,
+                                     ServiceClassDesc = x.ServiceClassDesc,
+                                     ActiveStatus = x.ActiveStatus,
+                                     l_ClassParameter = x.GtEspasc.Select(p => new DO_eSyaParameter
+                                     {
+                                         ParameterID = p.ParameterId,
+                                         ParmAction = p.ParmAction,
+                                         ParmPerc=p.ParmPerc,
+                                         ParmDesc=p.ParmDesc,
+                                         ParmValue=p.ParmValue,
+                                     }).ToList()
+                                 }
+                        ).FirstOrDefaultAsync();
+                    
+                    return await result;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+        public async Task<DO_ReturnParameter> AddOrUpdateServiceClass(DO_ServiceClass obj)
+        {
+            using (eSyaEnterprise db = new eSyaEnterprise())
+            {
+                using (var dbContext = db.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        if (obj.ServiceClassId == 0)
+                        {
+                            var RecordExist = db.GtEssrcl.Where(w => w.ServiceClassDesc == obj.ServiceClassDesc).Count();
+                            if (RecordExist > 0)
+                            {
+                                return new DO_ReturnParameter() { Status = false, Message = "Service Class Already Exists" };
+                            }
+                            else
+                            {
+                                
+
+                                var newServiceClassId = db.GtEssrcl.Select(a => (int)a.ServiceClassId).DefaultIfEmpty(0).Max() + 1;
+                                var parentId = obj.ParentId;
+                                if (parentId == 0)
+                                {
+                                    parentId = newServiceClassId;
+                                }
+                                var newPrintSequence = db.GtEssrcl.Where(w => w.ServiceGroupId == obj.ServiceGroupId).Select(a => (int)a.PrintSequence).DefaultIfEmpty(0).Max() + 1;
+                                
+                                var serviceclass = new GtEssrcl
+                                {
+                                    ServiceGroupId = obj.ServiceGroupId,
+                                    ServiceClassId = newServiceClassId,
+                                    ServiceClassDesc = obj.ServiceClassDesc,
+                                    ParentId=parentId,
+                                    PrintSequence = newPrintSequence,
+                                    ActiveStatus = obj.ActiveStatus,
+                                    FormId = obj.FormId,
+                                    CreatedBy = obj.UserID,
+                                    CreatedOn = obj.CreatedOn,
+                                    CreatedTerminal = obj.TerminalID
+                                };
+                                db.GtEssrcl.Add(serviceclass);
+                                foreach (DO_eSyaParameter cp in obj.l_ClassParameter)
+                                {
+                                    var cParameter = new GtEspasc
+                                    {
+                                        ServiceClassId = newServiceClassId,
+                                        ParameterId = cp.ParameterID,
+                                        ParmPerc = cp.ParmPerc,
+                                        ParmAction = cp.ParmAction,
+                                        ParmDesc = cp.ParmDesc,
+                                        ParmValue = cp.ParmValue,
+                                        ActiveStatus = cp.ActiveStatus,
+                                        FormId = obj.FormId,
+                                        CreatedBy = obj.UserID,
+                                        CreatedOn = System.DateTime.Now,
+                                        CreatedTerminal = obj.TerminalID,
+                                    };
+                                    db.GtEspasc.Add(cParameter);
+
+                                }
+                            }
+                        }
+                        else
+                        {
+                            var updatedServiceClass = db.GtEssrcl.Where(w => w.ServiceClassId == obj.ServiceClassId).FirstOrDefault();
+                            if (updatedServiceClass.ServiceClassDesc != obj.ServiceClassDesc)
+                            {
+                                var RecordExist = db.GtEssrcl.Where(w => w.ServiceClassDesc == obj.ServiceClassDesc).Count();
+                                if (RecordExist > 0)
+                                {
+                                    return new DO_ReturnParameter() { Status = false, Message = "Service Class Description Already Exists" };
+                                }
+                            }
+                            updatedServiceClass.ServiceClassDesc = obj.ServiceClassDesc;
+                            updatedServiceClass.ActiveStatus = obj.ActiveStatus;
+                            updatedServiceClass.ModifiedBy = obj.UserID;
+                            updatedServiceClass.ModifiedOn = obj.CreatedOn;
+                            updatedServiceClass.ModifiedTerminal = obj.TerminalID;
+
+                            foreach (DO_eSyaParameter cp in obj.l_ClassParameter)
+                            {
+                                var cPar = db.GtEspasc.Where(x => x.ServiceClassId == obj.ServiceClassId && x.ParameterId == cp.ParameterID).FirstOrDefault();
+                                if (cPar != null)
+                                {
+                                    cPar.ParmAction = cp.ParmAction;
+                                    cPar.ParmDesc = cp.ParmDesc;
+                                    cPar.ParmPerc = cp.ParmPerc;
+                                    cPar.ParmValue = cp.ParmValue;
+                                    cPar.ActiveStatus = obj.ActiveStatus;
+                                    cPar.ModifiedBy = obj.UserID;
+                                    cPar.ModifiedOn = System.DateTime.Now;
+                                    cPar.ModifiedTerminal = obj.TerminalID;
+                                }
+                                else
+                                {
+                                    var cParameter = new GtEspasc
+                                    {
+                                        ServiceClassId = obj.ServiceClassId,
+                                        ParameterId = cp.ParameterID,
+                                        ParmPerc = cp.ParmPerc,
+                                        ParmAction = cp.ParmAction,
+                                        ParmDesc = cp.ParmDesc,
+                                        ParmValue = cp.ParmValue,
+                                        ActiveStatus = cp.ActiveStatus,
+                                        FormId = obj.FormId,
+                                        CreatedBy = obj.UserID,
+                                        CreatedOn = System.DateTime.Now,
+                                        CreatedTerminal = obj.TerminalID,
+
+                                    };
+                                    db.GtEspasc.Add(cParameter);
+                                }
+
+                            }
+                        }
+
+                        await db.SaveChangesAsync();
+                        dbContext.Commit();
+                        return new DO_ReturnParameter { Status = true };
+
+
+                    }
+                    catch (Exception ex)
+                    {
+                        dbContext.Rollback();
+                        throw ex;
+                    }
+                }
+            }
+        }
+        public async Task<DO_ReturnParameter> UpdateServiceClassIndex(int serviceGroupId, int serviceClassId, bool isMoveUp, bool isMoveDown)
+        {
+            using (var db = new eSyaEnterprise())
+            {
+                using (var dbContext = db.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        var scCurrent = db.GtEssrcl.Where(w => w.ServiceGroupId == serviceGroupId && w.ServiceClassId == serviceClassId).FirstOrDefault();
+                        int switchIndex = 0;
+                        if (scCurrent.ParentId == scCurrent.ServiceClassId)
+                        {
+                        if (isMoveUp)
+                        {
+                            var isTop = db.GtEssrcl.Where(w => w.PrintSequence < scCurrent.PrintSequence && w.ServiceGroupId == serviceGroupId && w.ServiceClassId == w.ParentId).Count();
+                            if (isTop > 0)
+                            {
+                                var scTarget = db.GtEssrcl.Where(w => w.PrintSequence < scCurrent.PrintSequence && w.ServiceGroupId == serviceGroupId && w.ServiceClassId == w.ParentId).OrderByDescending(o => o.PrintSequence).FirstOrDefault();
+                                switchIndex = scCurrent.PrintSequence;
+                                scCurrent.PrintSequence = scTarget.PrintSequence;
+                                scTarget.PrintSequence = switchIndex;
+                            }
+                            else
+                            {
+                                return new DO_ReturnParameter() { Status = false, Message = scCurrent.ServiceClassDesc + " is already on top" };
+                            }
+                        }
+                        else if (isMoveDown)
+                        {
+                            var isBottom = db.GtEssrcl.Where(w => w.PrintSequence > scCurrent.PrintSequence && w.ServiceGroupId == serviceGroupId && w.ServiceClassId == w.ParentId).Count();
+                            if (isBottom > 0)
+                            {
+                                var scTarget = db.GtEssrcl.Where(w => w.PrintSequence > scCurrent.PrintSequence && w.ServiceGroupId == serviceGroupId && w.ServiceClassId == w.ParentId).OrderBy(o => o.PrintSequence).FirstOrDefault();
+                                switchIndex = scCurrent.PrintSequence;
+                                scCurrent.PrintSequence = scTarget.PrintSequence;
+                                scTarget.PrintSequence = switchIndex;
+                            }
+                            else
+                            {
+                                return new DO_ReturnParameter() { Status = false, Message = scCurrent.ServiceClassDesc + " is already on bottom" };
+                            }
+                        }
+                        }
+                        else
+                        {
+                            if (isMoveUp)
+                            {
+                                var isTop = db.GtEssrcl.Where(w => w.PrintSequence < scCurrent.PrintSequence && w.ServiceGroupId == serviceGroupId && w.ServiceClassId != w.ParentId && w.ParentId == scCurrent.ParentId).Count();
+                                if (isTop > 0)
+                                {
+                                    var scTarget = db.GtEssrcl.Where(w => w.PrintSequence < scCurrent.PrintSequence && w.ServiceGroupId == serviceGroupId && w.ServiceClassId != w.ParentId && w.ParentId == scCurrent.ParentId).OrderByDescending(o => o.PrintSequence).FirstOrDefault();
+                                    switchIndex = scCurrent.PrintSequence;
+                                    scCurrent.PrintSequence = scTarget.PrintSequence;
+                                    scTarget.PrintSequence = switchIndex;
+                                }
+                                else
+                                {
+                                    return new DO_ReturnParameter() { Status = false, Message = scCurrent.ServiceClassDesc + " is already on top" };
+                                }
+                            }
+                            else if (isMoveDown)
+                            {
+                                var isBottom = db.GtEssrcl.Where(w => w.PrintSequence > scCurrent.PrintSequence && w.ServiceGroupId == serviceGroupId && w.ServiceClassId != w.ParentId && w.ParentId == scCurrent.ParentId).Count();
+                                if (isBottom > 0)
+                                {
+                                    var scTarget = db.GtEssrcl.Where(w => w.PrintSequence > scCurrent.PrintSequence && w.ServiceGroupId == serviceGroupId && w.ServiceClassId != w.ParentId && w.ParentId == scCurrent.ParentId).OrderBy(o => o.PrintSequence).FirstOrDefault();
+                                    switchIndex = scCurrent.PrintSequence;
+                                    scCurrent.PrintSequence = scTarget.PrintSequence;
+                                    scTarget.PrintSequence = switchIndex;
+                                }
+                                else
+                                {
+                                    return new DO_ReturnParameter() { Status = false, Message = scCurrent.ServiceClassDesc + " is already on bottom" };
+                                }
+                            }
+                        }
+                        
+
+
+                        await db.SaveChangesAsync();
+                        dbContext.Commit();
+
+                        return new DO_ReturnParameter() { Status = true };
+                    }
+                    catch (Exception ex)
+                    {
+                        dbContext.Rollback();
+                        throw ex;
+                    }
+                }
+            }
+        }
+        #endregion
+
+        #region ServiceCode
+        public async Task<List<DO_ServiceCode>> GetServiceCodes()
+        {
+            try
+            {
+                using (eSyaEnterprise db = new eSyaEnterprise())
+                {
+                    var result = db.GtEssrms
+                                 .Select(x => new DO_ServiceCode
+                                 {
+                                     ServiceId=x.ServiceId,
+                                     ServiceTypeId=x.ServiceTypeId,
+                                     ServiceGroupId = x.ServiceGroupId,
+                                     ServiceClassId = x.ServiceClassId,
+                                     ServiceDesc=x.ServiceDesc,
+                                     ServiceShortDesc=x.ServiceShortDesc,
+                                     ActiveStatus = x.ActiveStatus
+                                 }
+                        ).ToListAsync();
+                    return await result;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+        public async Task<DO_ServiceCode> GetServiceCodeByID(int ServiceID)
+        {
+            try
+            {
+                using (eSyaEnterprise db = new eSyaEnterprise())
+                {
+                    var result = db.GtEssrms
+                        .Where(i => i.ServiceId == ServiceID)
+                                 .Select(x => new DO_ServiceCode
+                                 {
+                                     ServiceId = x.ServiceId,
+                                     ServiceDesc=x.ServiceDesc,
+                                     ServiceShortDesc=x.ServiceShortDesc,
+                                     InternalServiceCode=x.InternalServiceCode,
+                                     Gender=x.Gender,
+                                     IsServiceBillable=x.IsServiceBillable,
+                                     ActiveStatus = x.ActiveStatus,
+                                     l_ServiceParameter = x.GtEspasm.Select(p => new DO_eSyaParameter
+                                     {
+                                         ParameterID = p.ParameterId,
+                                         ParmAction = p.ParmAction,
+                                         ParmPerc = p.ParmPerc,
+                                         ParmValue = p.ParmValue,
+                                     }).ToList()
+                                 }
+                        ).FirstOrDefaultAsync();
+
+                    return await result;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+        public async Task<DO_ReturnParameter> AddOrUpdateServiceCode(DO_ServiceCode obj)
+        {
+            using (eSyaEnterprise db = new eSyaEnterprise())
+            {
+                using (var dbContext = db.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        if (obj.ServiceId == 0)
+                        {
+                            var RecordExist = db.GtEssrms.Where(w => w.ServiceDesc == obj.ServiceDesc || w.ServiceShortDesc == obj.ServiceShortDesc).Count();
+                            if (RecordExist > 0)
+                            {
+                                return new DO_ReturnParameter() { Status = false, Message = "Service Already Exists" };
+                            }
+                            else
+                            {
+
+
+                                var newServiceId = db.GtEssrms.Select(a => (int)a.ServiceId).DefaultIfEmpty(0).Max() + 1;                               
+                                var servicecode = new GtEssrms
+                                {
+                                    ServiceId = newServiceId,
+                                    ServiceTypeId = obj.ServiceTypeId,
+                                    ServiceGroupId = obj.ServiceGroupId,
+                                    ServiceClassId = obj.ServiceClassId,
+                                    ServiceDesc = obj.ServiceDesc,
+                                    ServiceShortDesc=obj.ServiceShortDesc,
+                                    Gender=obj.Gender,
+                                    InternalServiceCode=obj.InternalServiceCode,
+                                    IsServiceBillable=obj.IsServiceBillable,
+                                    ActiveStatus = obj.ActiveStatus,
+                                    FormId = obj.FormId,
+                                    CreatedBy = obj.UserID,
+                                    CreatedOn = obj.CreatedOn,
+                                    CreatedTerminal = obj.TerminalID
+                                };
+                                db.GtEssrms.Add(servicecode);
+                                foreach (DO_eSyaParameter sp in obj.l_ServiceParameter)
+                                {
+                                    var sParameter = new GtEspasm
+                                    {
+                                        ServiceId = newServiceId,
+                                        ParameterId = sp.ParameterID,
+                                        ParmPerc = sp.ParmPerc,
+                                        ParmAction = sp.ParmAction,
+                                        ParmValue = sp.ParmValue,
+                                        ActiveStatus = sp.ActiveStatus,
+                                        FormId = obj.FormId,
+                                        CreatedBy = obj.UserID,
+                                        CreatedOn = System.DateTime.Now,
+                                        CreatedTerminal = obj.TerminalID,
+                                    };
+                                    db.GtEspasm.Add(sParameter);
+
+                                }
+                            }
+                        }
+                        else
+                        {
+                            var updatedServiceCode = db.GtEssrms.Where(w => w.ServiceId == obj.ServiceId).FirstOrDefault();
+                            if(updatedServiceCode.ServiceDesc!=obj.ServiceDesc)
+                            {
+                                var RecordExist = db.GtEssrms.Where(w => w.ServiceDesc == obj.ServiceDesc).Count();
+                                if (RecordExist > 0)
+                                {
+                                    return new DO_ReturnParameter() { Status = false, Message = "Service Description Already Exists" };
+                                }
+                            }
+                            if (updatedServiceCode.ServiceShortDesc != obj.ServiceShortDesc)
+                            {
+                                var RecordExist = db.GtEssrms.Where(w => w.ServiceShortDesc == obj.ServiceShortDesc).Count();
+                                if (RecordExist > 0)
+                                {
+                                    return new DO_ReturnParameter() { Status = false, Message = "Service Short Description Already Exists" };
+                                }
+                            }
+                            updatedServiceCode.ServiceDesc = obj.ServiceDesc;
+                            updatedServiceCode.ServiceShortDesc = obj.ServiceShortDesc;
+                            updatedServiceCode.Gender = obj.Gender;
+                            updatedServiceCode.IsServiceBillable = obj.IsServiceBillable;
+                            updatedServiceCode.InternalServiceCode = obj.InternalServiceCode;
+                            updatedServiceCode.ActiveStatus = obj.ActiveStatus;
+                            updatedServiceCode.ModifiedBy = obj.UserID;
+                            updatedServiceCode.ModifiedOn = obj.CreatedOn;
+                            updatedServiceCode.ModifiedTerminal = obj.TerminalID;
+
+                            foreach (DO_eSyaParameter sp in obj.l_ServiceParameter)
+                            {
+                                var sPar = db.GtEspasm.Where(x => x.ServiceId == obj.ServiceId && x.ParameterId == sp.ParameterID).FirstOrDefault();
+                                if (sPar != null)
+                                {
+                                    sPar.ParmAction = sp.ParmAction;
+                                    sPar.ParmPerc = sp.ParmPerc;
+                                    sPar.ParmValue = sp.ParmValue;
+                                    sPar.ActiveStatus = obj.ActiveStatus;
+                                    sPar.ModifiedBy = obj.UserID;
+                                    sPar.ModifiedOn = System.DateTime.Now;
+                                    sPar.ModifiedTerminal = obj.TerminalID;
+                                }
+                                else
+                                {
+                                    var sParameter = new GtEspasm
+                                    {
+                                        ServiceId = obj.ServiceId,
+                                        ParameterId = sp.ParameterID,
+                                        ParmPerc = sp.ParmPerc,
+                                        ParmAction = sp.ParmAction,
+                                        ParmValue = sp.ParmValue,
+                                        ActiveStatus = sp.ActiveStatus,
+                                        FormId = obj.FormId,
+                                        CreatedBy = obj.UserID,
+                                        CreatedOn = System.DateTime.Now,
+                                        CreatedTerminal = obj.TerminalID,
+
+                                    };
+                                    db.GtEspasm.Add(sParameter);
+                                }
+
+                            }
+                        }
+
+                        await db.SaveChangesAsync();
+                        dbContext.Commit();
+                        return new DO_ReturnParameter { Status = true };
+
+
+                    }
+                    catch (Exception ex)
+                    {
+                        dbContext.Rollback();
+                        throw ex;
+                    }
+                }
+            }
+        }
+        #endregion
+    }
+}

@@ -1,0 +1,24 @@
+﻿using System;
+using System.Collections.Generic;
+
+namespace eSyaServices.DL.Entities
+{
+    public partial class GtEssrrp
+    {
+        public int BusinessKey { get; set; }
+        public int RateType { get; set; }
+        public int BaseRateType { get; set; }
+        public string RateVariationBy { get; set; }
+        public decimal RateVariationPercentage { get; set; }
+        public decimal RateVariationAmount { get; set; }
+        public decimal RoundOffBy { get; set; }
+        public string RateVariationFormula { get; set; }
+        public bool ActiveStatus { get; set; }
+        public int CreatedBy { get; set; }
+        public DateTime CreatedOn { get; set; }
+        public string CreatedTerminal { get; set; }
+        public int? ModifiedBy { get; set; }
+        public DateTime? ModifiedOn { get; set; }
+        public string ModifiedTerminal { get; set; }
+    }
+}

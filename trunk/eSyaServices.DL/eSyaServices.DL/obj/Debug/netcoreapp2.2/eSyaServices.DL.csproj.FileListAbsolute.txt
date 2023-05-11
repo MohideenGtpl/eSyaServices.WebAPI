@@ -1,0 +1,48 @@
+D:\eSya Enterprise\eSyaAllWebAPI_Project\eSyaServices.WebAPI\eSyaServices.DL\eSyaServices.DL\bin\Debug\netcoreapp2.2\eSyaServices.DL.deps.json
+D:\eSya Enterprise\eSyaAllWebAPI_Project\eSyaServices.WebAPI\eSyaServices.DL\eSyaServices.DL\bin\Debug\netcoreapp2.2\eSyaServices.DL.dll
+D:\eSya Enterprise\eSyaAllWebAPI_Project\eSyaServices.WebAPI\eSyaServices.DL\eSyaServices.DL\obj\Debug\netcoreapp2.2\eSyaServices.DL.csprojAssemblyReference.cache
+D:\eSya Enterprise\eSyaAllWebAPI_Project\eSyaServices.WebAPI\eSyaServices.DL\eSyaServices.DL\obj\Debug\netcoreapp2.2\eSyaServices.DL.csproj.CoreCompileInputs.cache
+D:\eSya Enterprise\eSyaAllWebAPI_Project\eSyaServices.WebAPI\eSyaServices.DL\eSyaServices.DL\obj\Debug\netcoreapp2.2\eSyaServices.DL.AssemblyInfoInputs.cache
+D:\eSya Enterprise\eSyaAllWebAPI_Project\eSyaServices.WebAPI\eSyaServices.DL\eSyaServices.DL\obj\Debug\netcoreapp2.2\eSyaServices.DL.AssemblyInfo.cs
+D:\eSya Enterprise\eSyaAllWebAPI_Project\eSyaServices.WebAPI\eSyaServices.DL\eSyaServices.DL\bin\Debug\netcoreapp2.2\eSyaServices.DL.runtimeconfig.json
+D:\eSya Enterprise\eSyaAllWebAPI_Project\eSyaServices.WebAPI\eSyaServices.DL\eSyaServices.DL\bin\Debug\netcoreapp2.2\eSyaServices.DL.runtimeconfig.dev.json
+D:\eSya Enterprise\eSyaAllWebAPI_Project\eSyaServices.WebAPI\eSyaServices.DL\eSyaServices.DL\bin\Debug\netcoreapp2.2\eSyaServices.DL.pdb
+D:\eSya Enterprise\eSyaAllWebAPI_Project\eSyaServices.WebAPI\eSyaServices.DL\eSyaServices.DL\bin\Debug\netcoreapp2.2\eSyaServices.DO.dll
+D:\eSya Enterprise\eSyaAllWebAPI_Project\eSyaServices.WebAPI\eSyaServices.DL\eSyaServices.DL\bin\Debug\netcoreapp2.2\eSyaServices.IF.dll
+D:\eSya Enterprise\eSyaAllWebAPI_Project\eSyaServices.WebAPI\eSyaServices.DL\eSyaServices.DL\bin\Debug\netcoreapp2.2\eSyaServices.DO.pdb
+D:\eSya Enterprise\eSyaAllWebAPI_Project\eSyaServices.WebAPI\eSyaServices.DL\eSyaServices.DL\bin\Debug\netcoreapp2.2\eSyaServices.IF.pdb
+D:\eSya Enterprise\eSyaAllWebAPI_Project\eSyaServices.WebAPI\eSyaServices.DL\eSyaServices.DL\obj\Debug\netcoreapp2.2\eSyaServices.DL.csproj.CopyComplete
+D:\eSya Enterprise\eSyaAllWebAPI_Project\eSyaServices.WebAPI\eSyaServices.DL\eSyaServices.DL\obj\Debug\netcoreapp2.2\eSyaServices.DL.dll
+D:\eSya Enterprise\eSyaAllWebAPI_Project\eSyaServices.WebAPI\eSyaServices.DL\eSyaServices.DL\obj\Debug\netcoreapp2.2\eSyaServices.DL.pdb
+D:\OfficeWorkingProjects\WebProjects\ESYAProject_WorkingUI&WEBAPI\Working_AlleSyaWebAPI\eSyaServices.WebAPI\eSyaServices.DL\eSyaServices.DL\bin\Debug\netcoreapp2.2\eSyaServices.DL.deps.json
+D:\OfficeWorkingProjects\WebProjects\ESYAProject_WorkingUI&WEBAPI\Working_AlleSyaWebAPI\eSyaServices.WebAPI\eSyaServices.DL\eSyaServices.DL\bin\Debug\netcoreapp2.2\eSyaServices.DL.runtimeconfig.json
+D:\OfficeWorkingProjects\WebProjects\ESYAProject_WorkingUI&WEBAPI\Working_AlleSyaWebAPI\eSyaServices.WebAPI\eSyaServices.DL\eSyaServices.DL\bin\Debug\netcoreapp2.2\eSyaServices.DL.runtimeconfig.dev.json
+D:\OfficeWorkingProjects\WebProjects\ESYAProject_WorkingUI&WEBAPI\Working_AlleSyaWebAPI\eSyaServices.WebAPI\eSyaServices.DL\eSyaServices.DL\bin\Debug\netcoreapp2.2\eSyaServices.DL.dll
+D:\OfficeWorkingProjects\WebProjects\ESYAProject_WorkingUI&WEBAPI\Working_AlleSyaWebAPI\eSyaServices.WebAPI\eSyaServices.DL\eSyaServices.DL\bin\Debug\netcoreapp2.2\eSyaServices.DL.pdb
+D:\OfficeWorkingProjects\WebProjects\ESYAProject_WorkingUI&WEBAPI\Working_AlleSyaWebAPI\eSyaServices.WebAPI\eSyaServices.DL\eSyaServices.DL\bin\Debug\netcoreapp2.2\eSyaServices.DO.dll
+D:\OfficeWorkingProjects\WebProjects\ESYAProject_WorkingUI&WEBAPI\Working_AlleSyaWebAPI\eSyaServices.WebAPI\eSyaServices.DL\eSyaServices.DL\bin\Debug\netcoreapp2.2\eSyaServices.IF.dll
+D:\OfficeWorkingProjects\WebProjects\ESYAProject_WorkingUI&WEBAPI\Working_AlleSyaWebAPI\eSyaServices.WebAPI\eSyaServices.DL\eSyaServices.DL\bin\Debug\netcoreapp2.2\eSyaServices.DO.pdb
+D:\OfficeWorkingProjects\WebProjects\ESYAProject_WorkingUI&WEBAPI\Working_AlleSyaWebAPI\eSyaServices.WebAPI\eSyaServices.DL\eSyaServices.DL\bin\Debug\netcoreapp2.2\eSyaServices.IF.pdb
+D:\OfficeWorkingProjects\WebProjects\ESYAProject_WorkingUI&WEBAPI\Working_AlleSyaWebAPI\eSyaServices.WebAPI\eSyaServices.DL\eSyaServices.DL\obj\Debug\netcoreapp2.2\eSyaServices.DL.csprojAssemblyReference.cache
+D:\OfficeWorkingProjects\WebProjects\ESYAProject_WorkingUI&WEBAPI\Working_AlleSyaWebAPI\eSyaServices.WebAPI\eSyaServices.DL\eSyaServices.DL\obj\Debug\netcoreapp2.2\eSyaServices.DL.csproj.CoreCompileInputs.cache
+D:\OfficeWorkingProjects\WebProjects\ESYAProject_WorkingUI&WEBAPI\Working_AlleSyaWebAPI\eSyaServices.WebAPI\eSyaServices.DL\eSyaServices.DL\obj\Debug\netcoreapp2.2\eSyaServices.DL.AssemblyInfoInputs.cache
+D:\OfficeWorkingProjects\WebProjects\ESYAProject_WorkingUI&WEBAPI\Working_AlleSyaWebAPI\eSyaServices.WebAPI\eSyaServices.DL\eSyaServices.DL\obj\Debug\netcoreapp2.2\eSyaServices.DL.AssemblyInfo.cs
+D:\OfficeWorkingProjects\WebProjects\ESYAProject_WorkingUI&WEBAPI\Working_AlleSyaWebAPI\eSyaServices.WebAPI\eSyaServices.DL\eSyaServices.DL\obj\Debug\netcoreapp2.2\eSyaServices.DL.csproj.CopyComplete
+D:\OfficeWorkingProjects\WebProjects\ESYAProject_WorkingUI&WEBAPI\Working_AlleSyaWebAPI\eSyaServices.WebAPI\eSyaServices.DL\eSyaServices.DL\obj\Debug\netcoreapp2.2\eSyaServices.DL.dll
+D:\OfficeWorkingProjects\WebProjects\ESYAProject_WorkingUI&WEBAPI\Working_AlleSyaWebAPI\eSyaServices.WebAPI\eSyaServices.DL\eSyaServices.DL\obj\Debug\netcoreapp2.2\eSyaServices.DL.pdb
+D:\OfficeWorkingProjects\AllWEBAPI\eSyaServices.WebAPI\eSyaServices.DL\eSyaServices.DL\bin\Debug\netcoreapp2.2\eSyaServices.DL.deps.json
+D:\OfficeWorkingProjects\AllWEBAPI\eSyaServices.WebAPI\eSyaServices.DL\eSyaServices.DL\bin\Debug\netcoreapp2.2\eSyaServices.DL.runtimeconfig.json
+D:\OfficeWorkingProjects\AllWEBAPI\eSyaServices.WebAPI\eSyaServices.DL\eSyaServices.DL\bin\Debug\netcoreapp2.2\eSyaServices.DL.runtimeconfig.dev.json
+D:\OfficeWorkingProjects\AllWEBAPI\eSyaServices.WebAPI\eSyaServices.DL\eSyaServices.DL\bin\Debug\netcoreapp2.2\eSyaServices.DL.dll
+D:\OfficeWorkingProjects\AllWEBAPI\eSyaServices.WebAPI\eSyaServices.DL\eSyaServices.DL\bin\Debug\netcoreapp2.2\eSyaServices.DL.pdb
+D:\OfficeWorkingProjects\AllWEBAPI\eSyaServices.WebAPI\eSyaServices.DL\eSyaServices.DL\bin\Debug\netcoreapp2.2\eSyaServices.DO.dll
+D:\OfficeWorkingProjects\AllWEBAPI\eSyaServices.WebAPI\eSyaServices.DL\eSyaServices.DL\bin\Debug\netcoreapp2.2\eSyaServices.IF.dll
+D:\OfficeWorkingProjects\AllWEBAPI\eSyaServices.WebAPI\eSyaServices.DL\eSyaServices.DL\bin\Debug\netcoreapp2.2\eSyaServices.DO.pdb
+D:\OfficeWorkingProjects\AllWEBAPI\eSyaServices.WebAPI\eSyaServices.DL\eSyaServices.DL\bin\Debug\netcoreapp2.2\eSyaServices.IF.pdb
+D:\OfficeWorkingProjects\AllWEBAPI\eSyaServices.WebAPI\eSyaServices.DL\eSyaServices.DL\obj\Debug\netcoreapp2.2\eSyaServices.DL.csprojAssemblyReference.cache
+D:\OfficeWorkingProjects\AllWEBAPI\eSyaServices.WebAPI\eSyaServices.DL\eSyaServices.DL\obj\Debug\netcoreapp2.2\eSyaServices.DL.csproj.CoreCompileInputs.cache
+D:\OfficeWorkingProjects\AllWEBAPI\eSyaServices.WebAPI\eSyaServices.DL\eSyaServices.DL\obj\Debug\netcoreapp2.2\eSyaServices.DL.AssemblyInfoInputs.cache
+D:\OfficeWorkingProjects\AllWEBAPI\eSyaServices.WebAPI\eSyaServices.DL\eSyaServices.DL\obj\Debug\netcoreapp2.2\eSyaServices.DL.AssemblyInfo.cs
+D:\OfficeWorkingProjects\AllWEBAPI\eSyaServices.WebAPI\eSyaServices.DL\eSyaServices.DL\obj\Debug\netcoreapp2.2\eSyaServices.DL.csproj.CopyComplete
+D:\OfficeWorkingProjects\AllWEBAPI\eSyaServices.WebAPI\eSyaServices.DL\eSyaServices.DL\obj\Debug\netcoreapp2.2\eSyaServices.DL.dll
+D:\OfficeWorkingProjects\AllWEBAPI\eSyaServices.WebAPI\eSyaServices.DL\eSyaServices.DL\obj\Debug\netcoreapp2.2\eSyaServices.DL.pdb

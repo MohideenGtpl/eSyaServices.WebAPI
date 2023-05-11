@@ -1,0 +1,29 @@
+﻿using HCP.Services.DO;
+using System;
+using System.Collections.Generic;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace HCP.Services.IF
+{
+    public interface IClinicServicesRepository
+    {
+       
+        #region CliniccServiceLink
+        Task<List<DO_ClinicServiceLink>> GetClinicServiceLinkByBKey(int businessKey);
+        Task<List<DO_ApplicationCode>> GetConsultationTypeByBKeyClinicType(int businessKey, int clinictype);
+        Task<List<DO_ServiceCode>> GetServicesPerformedByDoctor();
+        Task<DO_ReturnParameter> AddClinicServiceLink(DO_ClinicServiceLink obj);
+        #endregion
+
+        #region ClinicVisitRate
+        Task<List<DO_ClinicVisitRate>> GetClinicVisitRateByBKeyClinicTypeCurrCodeRateType(int businessKey, int clinictype, string currencycode,int ratetype);
+        Task<DO_ReturnParameter> AddOrUpdateClinicVisitRate(List<DO_ClinicVisitRate> obj);
+        #endregion
+
+        #region ClinicDoctorRate
+        Task<List<DO_ClinicVisitRate>> GetClinicDoctorRateByBKeyDoctorIDCurrCode(int businessKey, int doctorid, string currencycode);
+        Task<DO_ReturnParameter> AddOrUpdateClinicDoctorRate(List<DO_ClinicVisitRate> obj);
+        #endregion
+    }
+}

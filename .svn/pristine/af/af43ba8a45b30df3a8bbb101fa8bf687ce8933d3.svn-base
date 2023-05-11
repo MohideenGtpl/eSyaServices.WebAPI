@@ -1,0 +1,61 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using eSyaServices.DO;
+using eSyaServices.IF;
+using Microsoft.AspNetCore.Mvc;
+
+namespace eSyaServices.WebAPI.Controllers
+{
+    [Route("api/[controller]/[action]")]
+    [ApiController]
+    public class ServiceManagementController : ControllerBase
+    {
+        private readonly IServiceManagementRepository _ServiceManagementRepository;
+        public ServiceManagementController(IServiceManagementRepository serviceManagementRepository)
+        {
+            _ServiceManagementRepository = serviceManagementRepository;
+        }
+        #region ServiceType
+        public async Task<IActionResult> GetServiceTypes()
+        {
+            var ac = await _ServiceManagementRepository.GetServiceTypes();
+            return Ok(ac);
+        }
+        public async Task<IActionResult> GetServiceTypeByID(int ServiceTypeID)
+        {
+            var ac = await _ServiceManagementRepository.GetServiceTypeByID(ServiceTypeID);
+            return Ok(ac);
+        }
+        public async Task<IActionResult> AddOrUpdateServiceType(DO_ServiceType obj)
+        {
+            var msg = await _ServiceManagementRepository.AddOrUpdateServiceType(obj);
+            return Ok(msg);
+        }
+        #endregion
+        #region ServiceGroup
+        public async Task<IActionResult> GetServiceGroups()
+        {
+            var ac = await _ServiceManagementRepository.GetServiceGroups();
+            return Ok(ac);
+        }
+        public async Task<IActionResult> GetServiceGroupByID(int ServiceGroupID)
+        {
+            var ac = await _ServiceManagementRepository.GetServiceGroupByID(ServiceGroupID);
+            return Ok(ac);
+        }
+        public async Task<IActionResult> AddOrUpdateServiceGroup(DO_ServiceGroup obj)
+        {
+            var msg = await _ServiceManagementRepository.AddOrUpdateServiceGroup(obj);
+            return Ok(msg);
+        }
+        public async Task<IActionResult> UpdateServiceGroupIndex(int serviceTypeId, int serviceGroupId, bool isMoveUp, bool isMoveDown)
+        {
+            var msg = await _ServiceManagementRepository.UpdateServiceGroupIndex(serviceTypeId,serviceGroupId,isMoveUp,isMoveDown);
+            return Ok(msg);
+        }
+            #endregion
+
+        }
+}

@@ -1,0 +1,75 @@
+﻿using eSyaServices.DO;
+using System;
+using System.Collections.Generic;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace eSyaServices.IF
+{
+    public interface IServiceManagementRepository
+    {
+        #region ServiceTypes
+        Task<List<DO_ServiceType>> GetServiceTypes();
+        Task<DO_ServiceType> GetServiceTypeByID(int ServiceTypeID);
+        Task<DO_ReturnParameter> AddOrUpdateServiceType(DO_ServiceType obj);
+        Task<DO_ReturnParameter> UpdateServiceTypeIndex(int serviceTypeId, bool isMoveUp, bool isMoveDown);
+        #endregion
+
+        #region ServiceGroups
+        Task<List<DO_ServiceGroup>> GetServiceGroups();
+        Task<List<DO_ServiceGroup>> GetServiceGroupsByTypeID(int servicetype);
+        Task<DO_ServiceGroup> GetServiceGroupByID(int ServiceGroupID);
+        Task<DO_ReturnParameter> AddOrUpdateServiceGroup(DO_ServiceGroup obj);
+        Task<DO_ReturnParameter> UpdateServiceGroupIndex(int serviceTypeId, int serviceGroupId, bool isMoveUp, bool isMoveDown);
+        #endregion
+
+        #region ServiceClass
+        Task<List<DO_ServiceClass>> GetServiceClasses();
+        Task<List<DO_ServiceClass>> GetServiceClassesByGroupID(int servicegroup);
+        Task<DO_ServiceClass> GetServiceClassByID(int ServiceClassID);
+        Task<DO_ReturnParameter> AddOrUpdateServiceClass(DO_ServiceClass obj);
+        Task<DO_ReturnParameter> UpdateServiceClassIndex(int serviceGroupId, int serviceClassId, bool isMoveUp, bool isMoveDown);
+        #endregion
+
+        #region ServiceCode
+        Task<List<DO_ServiceCode>> GetServiceCodes();
+        Task<DO_ServiceCode> GetServiceCodeByID(int ServiceID);
+        Task<DO_ReturnParameter> AddOrUpdateServiceCode(DO_ServiceCode obj);
+        #endregion
+       
+        #region ServiceCodePattern
+        Task<List<DO_ServiceCodePattern>> GetServiceCodePatterns();
+        Task<DO_ReturnParameter> AddServiceCodePattern(DO_ServiceCodePattern obj);
+        #endregion
+
+        #region ServiceBusinessLink
+        Task<List<DO_ServiceBusinessLink>> GetBusinessLocationServices(int businessKey);
+        Task<DO_ReturnParameter> AddOrUpdateBusinessLocationServices(List<DO_ServiceBusinessLink> obj);
+        Task<List<DO_ServiceBusinessLink>> GetServiceBusinessLocations(int ServiceId);
+        Task<DO_ReturnParameter> UpdateServiceBusinessLocations(List<DO_ServiceBusinessLink> obj);
+        Task<List<DO_ServiceCode>> GetServiceBusinessLink(int businessKey);
+        #endregion
+
+        #region ServiceBaseRate
+        Task<List<DO_ServiceBaseRate>> GetServiceBaseRateByBKeyRateTypeCurrCode(int businessKey, int ratetype, string currencycode);
+        Task<DO_ReturnParameter> AddOrUpdateServiceBaseRate(List<DO_ServiceBaseRate> obj);
+        #endregion
+
+        #region ServiceRatePlan
+        Task<List<DO_ServiceRatePlan>> GetServiceRatePlansByBKey(int businessKey);
+        Task<DO_ServiceRatePlan> GetServiceRatePlanByBKeyRType(int businessKey, int ratetype);
+        Task<DO_ReturnParameter> AddOrUpdateServiceRatePlan(DO_ServiceRatePlan obj);
+        #endregion
+
+        #region ServiceMaster
+        Task<List<DO_ServiceCode>> GetServiceMaster(int servicetype, int servicegroup, int serviceclass);
+        #endregion
+
+        #region CliniccServiceLink
+        Task<List<DO_ClinicServiceLink>> GetClinicServiceLinkByBKey(int businessKey);
+        Task<List<DO_ApplicationCode>> GetConsultationTypeByBKeyClinicType(int businessKey, int clinictype);
+        Task<List<DO_ServiceCode>> GetServicesPerformedByDoctor();
+        Task<DO_ReturnParameter> AddClinicServiceLink(DO_ClinicServiceLink obj);
+        #endregion
+    }
+}

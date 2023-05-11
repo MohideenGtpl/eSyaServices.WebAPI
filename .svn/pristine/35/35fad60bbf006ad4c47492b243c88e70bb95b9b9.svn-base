@@ -1,0 +1,458 @@
+﻿using HCP.Services.DL.Entities;
+using HCP.Services.DO;
+using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using HCP.Services.IF;
+
+namespace HCP.Services.DL.Repository
+{
+    public class ClinincServicesRepository : IClinicServicesRepository
+    {
+       
+        #region CliniccServiceLink
+        public async Task<List<DO_ClinicServiceLink>> GetClinicServiceLinkByBKey(int businessKey)
+        {
+            try
+            {
+                using (eSyaEnterprise db = new eSyaEnterprise())
+                {
+                    var result = db.GtEsclsl
+                        .Join(db.GtEcapcd,
+                        l => l.ClinicId,
+                        c => c.ApplicationCode,
+                        (l, c) => new { l, c })
+                        .Join(db.GtEcapcd,
+                        lc => lc.l.ConsultationId,
+                        n => n.ApplicationCode,
+                        (lc, n) => new { lc, n })
+                        .Join(db.GtEssrms,
+                        lcn => lcn.lc.l.ServiceId,
+                        s => s.ServiceId,
+                        (lcn, s) => new { lcn, s })
+                        .Where(w => w.lcn.lc.l.BusinessKey == businessKey)
+                                 .Select(x => new DO_ClinicServiceLink
+                                 {
+                                     BusinessKey=x.lcn.lc.l.BusinessKey,
+                                     ClinicId= x.lcn.lc.l.ClinicId,
+                                     ClinicDesc= x.lcn.lc.c.CodeDesc,
+                                     ConsultationId= x.lcn.lc.l.ConsultationId,
+                                     ConsultationDesc = x.lcn.n.CodeDesc,
+                                     ServiceId= x.lcn.lc.l.ServiceId,
+                                     ServiceDesc= x.s.ServiceDesc,
+                                     VisitRule= x.lcn.lc.l.VisitRule,
+                                     ActiveStatus = x.lcn.lc.l.ActiveStatus
+                                 }
+                        ).ToListAsync();
+                    return await result;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+        public async Task<List<DO_ApplicationCode>> GetConsultationTypeByBKeyClinicType(int businessKey,int clinictype)
+        {
+            try
+            {
+                using (eSyaEnterprise db = new eSyaEnterprise())
+                {
+                    var result = db.GtEsopcl
+                        .Join(db.GtEcapcd,
+                        c => c.ConsultationId,
+                        n => n.ApplicationCode,
+                        (c, n) => new { c, n})
+                        .Where(w => w.c.BusinessKey == businessKey && w.c.ClinicId==clinictype)
+                                 .Select(x => new DO_ApplicationCode
+                                 {
+                                     ApplicationCode=x.c.ConsultationId,
+                                     CodeDesc=x.n.CodeDesc
+                                 }
+                        ).ToListAsync();
+                    return await result;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+        public async Task<List<DO_ServiceCode>> GetServicesPerformedByDoctor()
+        {
+            try
+            {
+                using (eSyaEnterprise db = new eSyaEnterprise())
+                {
+                    var result = db.GtEssrms
+                        .Join(db.GtEspasm,
+                        s => s.ServiceId,
+                        p => p.ServiceId,
+                        (s, p) => new { s, p })
+                        .Where(w => w.p.ParameterId==5 && w.p.ParmAction)
+                                 .Select(x => new DO_ServiceCode
+                                 {
+                                     ServiceId = x.s.ServiceId,
+                                     ServiceDesc = x.s.ServiceDesc
+                                 }
+                        ).ToListAsync();
+                    return await result;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+        public async Task<DO_ReturnParameter> AddClinicServiceLink(DO_ClinicServiceLink obj)
+        {
+            using (eSyaEnterprise db = new eSyaEnterprise())
+            {
+                using (var dbContext = db.Database.BeginTransaction())
+                {
+                    try
+                    {
+                            var RecordExist = db.GtEsclsl.Where(w => w.BusinessKey == obj.BusinessKey && w.ClinicId == obj.ClinicId && w.ConsultationId==obj.ConsultationId && w.ServiceId==obj.ServiceId ).Count();
+                            if (RecordExist > 0)
+                            {
+                                return new DO_ReturnParameter() { Status = false, Message = "Record Already Exists" };
+                            }
+                            else
+                            {
+
+                                var clinicservicelink = new GtEsclsl
+                                {
+                                    BusinessKey = obj.BusinessKey,
+                                    ClinicId = obj.ClinicId,
+                                    ConsultationId = obj.ConsultationId,
+                                    ServiceId = obj.ServiceId,
+                                    VisitRule = obj.VisitRule,
+                                    ActiveStatus = obj.ActiveStatus,
+                                    FormId = obj.FormId,
+                                    CreatedBy = obj.UserID,
+                                    CreatedOn = obj.CreatedOn,
+                                    CreatedTerminal = obj.TerminalID
+                                };
+                                db.GtEsclsl.Add(clinicservicelink);
+
+                            }
+                        
+
+
+                        await db.SaveChangesAsync();
+                        dbContext.Commit();
+                        return new DO_ReturnParameter { Status = true };
+
+
+                    }
+                    catch (Exception ex)
+                    {
+                        dbContext.Rollback();
+                        throw ex;
+                    }
+                }
+            }
+        }
+        #endregion
+
+        #region ClinicVisitRate
+        public async Task<List<DO_ClinicVisitRate>> GetClinicVisitRateByBKeyClinicTypeCurrCodeRateType(int businessKey, int clinictype, string currencycode,int ratetype)
+        {
+            try
+            {
+                using (eSyaEnterprise db = new eSyaEnterprise())
+                {
+                    var defaultDate = DateTime.Now.Date;
+                    var result = db.GtEsclsl.Where(w=> w.BusinessKey==businessKey&& w.ActiveStatus && (clinictype==0? true: w.ClinicId==clinictype))
+                        .Join(db.GtEssrms,
+                        l => l.ServiceId,
+                        s => s.ServiceId,
+                        (l, s) => new { l, s })
+                        .Join(db.GtEcapcd,
+                        ls => ls.l.ClinicId,
+                        c => c.ApplicationCode,
+                        (ls, c) => new { ls, c })
+                        .Join(db.GtEcapcd,
+                        lsc => lsc.ls.l.ConsultationId,
+                        n => n.ApplicationCode,
+                        (lsc, n) => new { lsc, n })
+                        .GroupJoin(db.GtEsclst.Where(w => w.BusinessKey == businessKey && (clinictype == 0 ? true : w.ClinicId == clinictype) && w.CurrencyCode == currencycode && w.RateType==ratetype).OrderByDescending(o => o.ActiveStatus),
+                        lscn => lscn.lsc.ls.l.ClinicId,
+                        r => r.ClinicId,
+                        (lscn, r) => new { lscn, r = r.Where(w=> w.ConsultationId==lscn.lsc.ls.l.ConsultationId && w.ServiceId == lscn.lsc.ls.l.ServiceId).FirstOrDefault() })
+                                 .Select(x => new DO_ClinicVisitRate
+                                 {
+                                     ServiceId = x.lscn.lsc.ls.s.ServiceId,
+                                     ClinicId= x.lscn.lsc.c.ApplicationCode,
+                                     ConsultationId= x.lscn.n.ApplicationCode,
+                                     ServiceDesc = x.lscn.lsc.ls.s.ServiceDesc,
+                                     ClinicDesc=x.lscn.lsc.c.CodeDesc,
+                                     ConsultationDesc=x.lscn.n.CodeDesc,
+                                     Tariff=x.r!=null? x.r.Tariff : 0,                                    
+                                     EffectiveDate = x.r != null ? x.r.EffectiveDate : defaultDate,
+                                     ActiveStatus = x.r != null ? x.r.ActiveStatus : true,
+                                 }
+                        ).ToListAsync();
+                    return await result;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+        public async Task<DO_ReturnParameter> AddOrUpdateClinicVisitRate(List<DO_ClinicVisitRate> obj)
+        {
+            using (eSyaEnterprise db = new eSyaEnterprise())
+            {
+                using (var dbContext = db.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        foreach (var c_visitrate in obj)
+                        {
+                            var ServiceExist = db.GtEsclst.Where(w => w.ServiceId == c_visitrate.ServiceId && w.BusinessKey == c_visitrate.BusinessKey && w.ClinicId == c_visitrate.ClinicId && w.ConsultationId == c_visitrate.ConsultationId && w.CurrencyCode == c_visitrate.CurrencyCode && w.RateType==c_visitrate.RateType && w.EffectiveTill == null).FirstOrDefault();
+                            if (ServiceExist != null)
+                            {
+                                if (c_visitrate.EffectiveDate != ServiceExist.EffectiveDate)
+                                {
+                                    if (c_visitrate.EffectiveDate < ServiceExist.EffectiveDate)
+                                    {
+                                        return new DO_ReturnParameter() { Status = false, Message = "New effective date can't be less than the current effective date" };
+                                    }
+                                    ServiceExist.EffectiveTill = c_visitrate.EffectiveDate.AddDays(-1);
+                                    ServiceExist.ModifiedBy = c_visitrate.UserID;
+                                    ServiceExist.ModifiedOn = c_visitrate.CreatedOn;
+                                    ServiceExist.ModifiedTerminal = c_visitrate.TerminalID;
+                                    ServiceExist.ActiveStatus = false;
+
+                                    var clinicvisitrate = new GtEsclst
+                                    {
+                                        BusinessKey = c_visitrate.BusinessKey,
+                                        ServiceId = c_visitrate.ServiceId,
+                                        ClinicId = c_visitrate.ClinicId,
+                                        ConsultationId=c_visitrate.ConsultationId,
+                                        RateType=c_visitrate.RateType,
+                                        CurrencyCode = c_visitrate.CurrencyCode,
+                                        EffectiveDate = c_visitrate.EffectiveDate,
+                                        Tariff=c_visitrate.Tariff,
+                                        ActiveStatus = c_visitrate.ActiveStatus,
+                                        FormId = c_visitrate.FormId,
+                                        CreatedBy = c_visitrate.UserID,
+                                        CreatedOn = c_visitrate.CreatedOn,
+                                        CreatedTerminal = c_visitrate.TerminalID
+                                    };
+                                    db.GtEsclst.Add(clinicvisitrate);
+
+
+                                }
+                                else
+                                {
+                                    ServiceExist.Tariff = c_visitrate.Tariff;
+                                    ServiceExist.ActiveStatus = c_visitrate.ActiveStatus;
+
+                                    ServiceExist.ModifiedBy = c_visitrate.UserID;
+                                    ServiceExist.ModifiedOn = c_visitrate.CreatedOn;
+                                    ServiceExist.ModifiedTerminal = c_visitrate.TerminalID;
+                                }
+
+                            }
+                            else
+                            {
+                                if (c_visitrate.Tariff != 0)
+                                {
+                                    var clinicvisitrate = new GtEsclst
+                                    {
+                                        BusinessKey = c_visitrate.BusinessKey,
+                                        ServiceId = c_visitrate.ServiceId,
+                                        ClinicId = c_visitrate.ClinicId,
+                                        ConsultationId = c_visitrate.ConsultationId,
+                                        RateType=c_visitrate.RateType,
+                                        CurrencyCode = c_visitrate.CurrencyCode,
+                                        EffectiveDate = c_visitrate.EffectiveDate,
+                                        Tariff = c_visitrate.Tariff,
+                                        ActiveStatus = c_visitrate.ActiveStatus,
+                                        FormId = c_visitrate.FormId,
+                                        CreatedBy = c_visitrate.UserID,
+                                        CreatedOn = c_visitrate.CreatedOn,
+                                        CreatedTerminal = c_visitrate.TerminalID
+                                    };
+                                    db.GtEsclst.Add(clinicvisitrate);
+                                }
+
+                            }
+                        }
+                        await db.SaveChangesAsync();
+                        dbContext.Commit();
+                        return new DO_ReturnParameter { Status = true };
+
+
+                    }
+                    catch (Exception ex)
+                    {
+                        dbContext.Rollback();
+                        return new DO_ReturnParameter() { Status = false, Message = ex.Message };
+                    }
+                }
+            }
+        }
+        #endregion
+
+        #region ClinicDoctorRate
+        public async Task<List<DO_ClinicVisitRate>> GetClinicDoctorRateByBKeyDoctorIDCurrCode(int businessKey, int doctorid, string currencycode)
+        {
+            try
+            {
+                using (eSyaEnterprise db = new eSyaEnterprise())
+                {
+                    var defaultDate = DateTime.Now.Date;
+                    var result = db.GtEsdocl.Where(w => w.BusinessKey == businessKey && w.DoctorId ==doctorid && w.ActiveStatus )
+                        .Join(db.GtEsdocd,
+                        l => l.DoctorId,
+                        d => d.DoctorId,
+                        (l, d) => new { l, d })
+                        .Join(db.GtEcapcd,
+                        ld => ld.l.ClinicId,
+                        c => c.ApplicationCode,
+                        (ld, c) => new { ld, c })
+                        .Join(db.GtEcapcd,
+                        ldc => ldc.ld.l.ConsultationId,
+                        n => n.ApplicationCode,
+                        (ldc, n) => new { ldc, n })
+                        .Join(db.GtEsclsl,
+                        ldcn => ldcn.ldc.ld.l.ClinicId + ldcn.ldc.ld.l.ConsultationId,
+                        s => s.ClinicId+s.ConsultationId,
+                        (ldcn, s) => new { ldcn, s })
+                        .Join(db.GtEssrms,
+                        ldcns => ldcns.s.ServiceId,
+                        m => m.ServiceId,
+                        (ldcns, m) => new { ldcns, m })
+
+                        .GroupJoin(db.GtEscdst.Where(w => w.BusinessKey == businessKey &&  w.DoctorId == doctorid && w.CurrencyCode == currencycode).OrderByDescending(o => o.ActiveStatus),
+                        ldcnsm => ldcnsm.ldcns.ldcn.ldc.ld.l.DoctorId,
+                        r => r.DoctorId,
+                        (ldcnsm, r) => new { ldcnsm, r = r.Where(w => w.ClinicId== ldcnsm.ldcns.ldcn.ldc.ld.l.ClinicId && w.ConsultationId == ldcnsm.ldcns.ldcn.ldc.ld.l.ConsultationId && w.DoctorId == ldcnsm.ldcns.ldcn.ldc.ld.l.DoctorId && w.ServiceId== ldcnsm.ldcns.s.ServiceId).FirstOrDefault() })
+                                 .Select(x => new DO_ClinicVisitRate
+                                 {
+                                     ClinicId = x.ldcnsm.ldcns.ldcn.ldc.c.ApplicationCode,
+                                     ConsultationId = x.ldcnsm.ldcns.ldcn.n.ApplicationCode,
+                                     ServiceId = x.ldcnsm.ldcns.s.ServiceId,
+                                     DoctorId = x.ldcnsm.ldcns.ldcn.ldc.ld.l.DoctorId,
+                                     ClinicDesc = x.ldcnsm.ldcns.ldcn.ldc.c.CodeDesc,
+                                     ConsultationDesc = x.ldcnsm.ldcns.ldcn.n.CodeDesc,
+                                     DoctorName = x.ldcnsm.ldcns.ldcn.ldc.ld.d.DoctorName,
+                                     ServiceDesc = x.ldcnsm.m.ServiceDesc,
+                                     Tariff = x.r != null ? x.r.Tariff : 0,
+                                     EffectiveDate = x.r != null ? x.r.EffectiveDate : defaultDate,
+                                     ActiveStatus = x.r != null ? x.r.ActiveStatus : true,
+                                 }
+                        ).ToListAsync();
+                    return await result;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+        public async Task<DO_ReturnParameter> AddOrUpdateClinicDoctorRate(List<DO_ClinicVisitRate> obj)
+        {
+            using (eSyaEnterprise db = new eSyaEnterprise())
+            {
+                using (var dbContext = db.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        foreach (var c_doctorrate in obj)
+                        {
+                            var ServiceExist = db.GtEscdst.Where(w => w.DoctorId== c_doctorrate.DoctorId && w.ServiceId == c_doctorrate.ServiceId && w.BusinessKey == c_doctorrate.BusinessKey && w.ClinicId == c_doctorrate.ClinicId && w.ConsultationId == c_doctorrate.ConsultationId && w.CurrencyCode == c_doctorrate.CurrencyCode && w.EffectiveTill == null).FirstOrDefault();
+                            if (ServiceExist != null)
+                            {
+                                if (c_doctorrate.EffectiveDate != ServiceExist.EffectiveDate)
+                                {
+                                    if (c_doctorrate.EffectiveDate < ServiceExist.EffectiveDate)
+                                    {
+                                        return new DO_ReturnParameter() { Status = false, Message = "New effective date can't be less than the current effective date" };
+                                    }
+                                    ServiceExist.EffectiveTill = c_doctorrate.EffectiveDate.AddDays(-1);
+                                    ServiceExist.ModifiedBy = c_doctorrate.UserID;
+                                    ServiceExist.ModifiedOn = c_doctorrate.CreatedOn;
+                                    ServiceExist.ModifiedTerminal = c_doctorrate.TerminalID;
+                                    ServiceExist.ActiveStatus = false;
+
+                                    var clinicdoctorrate = new GtEscdst
+                                    {
+                                        BusinessKey = c_doctorrate.BusinessKey,
+                                        DoctorId=c_doctorrate.DoctorId,
+                                        ServiceId = c_doctorrate.ServiceId,
+                                        ClinicId = c_doctorrate.ClinicId,
+                                        ConsultationId = c_doctorrate.ConsultationId,
+                                        CurrencyCode = c_doctorrate.CurrencyCode,
+                                        EffectiveDate = c_doctorrate.EffectiveDate,
+                                        Tariff = c_doctorrate.Tariff,
+                                        ActiveStatus = c_doctorrate.ActiveStatus,
+                                        FormId = c_doctorrate.FormId,
+                                        CreatedBy = c_doctorrate.UserID,
+                                        CreatedOn = c_doctorrate.CreatedOn,
+                                        CreatedTerminal = c_doctorrate.TerminalID
+                                    };
+                                    db.GtEscdst.Add(clinicdoctorrate);
+
+
+                                }
+                                else
+                                {
+                                    ServiceExist.Tariff = c_doctorrate.Tariff;
+                                    ServiceExist.ActiveStatus = c_doctorrate.ActiveStatus;
+
+                                    ServiceExist.ModifiedBy = c_doctorrate.UserID;
+                                    ServiceExist.ModifiedOn = c_doctorrate.CreatedOn;
+                                    ServiceExist.ModifiedTerminal = c_doctorrate.TerminalID;
+                                }
+
+                            }
+                            else
+                            {
+                                if (c_doctorrate.Tariff != 0)
+                                {
+                                    var clinicdoctorrate = new GtEscdst
+                                    {
+                                        BusinessKey = c_doctorrate.BusinessKey,
+                                        DoctorId=c_doctorrate.DoctorId,
+                                        CurrencyCode = c_doctorrate.CurrencyCode,
+                                        ServiceId = c_doctorrate.ServiceId,
+                                        ClinicId = c_doctorrate.ClinicId,
+                                        ConsultationId = c_doctorrate.ConsultationId,
+                                        EffectiveDate = c_doctorrate.EffectiveDate,
+                                        Tariff = c_doctorrate.Tariff,
+                                        ActiveStatus = c_doctorrate.ActiveStatus,
+                                        FormId = c_doctorrate.FormId,
+                                        CreatedBy = c_doctorrate.UserID,
+                                        CreatedOn = c_doctorrate.CreatedOn,
+                                        CreatedTerminal = c_doctorrate.TerminalID
+                                    };
+                                    db.GtEscdst.Add(clinicdoctorrate);
+                                }
+
+                            }
+                        }
+                        await db.SaveChangesAsync();
+                        dbContext.Commit();
+                        return new DO_ReturnParameter { Status = true };
+
+
+                    }
+                    catch (Exception ex)
+                    {
+                        dbContext.Rollback();
+                        return new DO_ReturnParameter() { Status = false, Message = ex.Message };
+                    }
+                }
+            }
+        }
+        #endregion
+    }
+}
